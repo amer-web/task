@@ -49,7 +49,11 @@ class ZipController extends Controller
                 'user_id' => auth()->user()->id
             ];
             FileUpload::create($data);
-            $file->move(public_path('uploadFiles'), $fileName);
+            $filePath = public_path('uploadFiles');
+            if (!\File::exists($filePath)) {
+                \File::makeDirectory($filePath, 0755, true);
+            }
+            $file->move($filePath, $fileName);
             \DB::commit();
             return back()
                 ->with('success', 'You have successfully upload and extracted file in path ' . public_path('extract'));
